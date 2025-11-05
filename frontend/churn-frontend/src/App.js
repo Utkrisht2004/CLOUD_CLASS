@@ -41,7 +41,7 @@ function App() {
     setPrediction(null);
     setError(null);
 
-    const API_URL = 'http://127.0.0.1:8000/predict_churn';
+    const API_URL = 'https://cloud-class-api.onrender.com';
 
     try {
       const response = await fetch(API_URL, {

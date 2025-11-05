@@ -14,7 +14,7 @@ print("Loading Bank Churn data...")
 # --- IMPORTANT: Loading CSV from the 'app' folder ---
 try:
     # Path is relative from 'ml' folder: Go up (..), then into (app)
-    df = pd.read_csv("../app/bank_churn.csv")
+    df = pd.read_csv("bank_churn.csv")
 except FileNotFoundError:
     print("ERROR: bank_churn.csv not found.")
     print("Please make sure it is inside the 'backend/app' folder.")

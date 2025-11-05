@@ -4,102 +4,68 @@ import joblib
 import pandas as pd
 from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI(title="Customer Churn Predictor API")
+app = FastAPI(title="Bank Churn Predictor API")
 
+# --- Make sure your frontend URL is in allow_origins ---
+# (You'll add the Vercel URL here once it's deployed)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "https://your-project.vercel.app"],
+    allow_origins=["http://localhost:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# 1. Load the model
+# 1. Load the new model
 try:
-    # Remember to use the correct path from your root!
-    pipeline = joblib.load("app/churn_pipeline.joblib")
-    print("Pipeline loaded successfully.")
+    # It will look for this file inside the 'app' folder
+    pipeline = joblib.load("app/bank_churn_pipeline.joblib")
+    print("Bank Churn Pipeline loaded successfully.")
 except FileNotFoundError:
-    print("ERROR: Model file 'churn_pipeline.joblib' not found.")
+    print("ERROR: Model file 'bank_churn_pipeline.joblib' not found.")
+    print("Did you run train.py and move the file to the 'app' folder?")
     pipeline = None
 
-# -----------------------------------------------------------------
-# 👇 REPLACE your old CustomerData class with this new one
-# -----------------------------------------------------------------
-class CustomerData(BaseModel):
-    # Old features
+# 2. Define the new input data model
+class BankCustomerData(BaseModel):
+    credit_score: int
+    age: int
     tenure: int
-    MonthlyCharges: float
-    TotalCharges: float
-    gender: str
-    Partner: str
-    Dependents: str
-    PhoneService: str
-    InternetService: str
-    Contract: str
-    PaymentMethod: str
-    
-    # --- NEW FEATURES ---
-    MultipleLines: str
-    OnlineSecurity: str
-    OnlineBackup: str
-    DeviceProtection: str
-    TechSupport: str
-    StreamingTV: str
-    StreamingMovies: str
-    PaperlessBilling: str # <-- Added this one too
-    
-    class Config:
-        schema_extra = {
-            "example": {
-                "tenure": 12, "MonthlyCharges": 75.5, "TotalCharges": 150, "gender": "Male",
-                "Partner": "Yes", "Dependents": "No", "PhoneService": "Yes",
-                "InternetService": "DSL", "Contract": "Month-to-month",
-                "PaymentMethod": "Electronic check", "MultipleLines": "No",
-                "OnlineSecurity": "No", "OnlineBackup": "Yes",
-                "DeviceProtection": "No", "TechSupport": "No",
-                "StreamingTV": "No", "StreamingMovies": "No",
-                "PaperlessBilling": "Yes"
-            }
-        }
-# -----------------------------------------------------------------
+    balance: float
+    products_number: int
+    estimated_salary: float
+    country: str       # 'France', 'Spain', 'Germany'
+    gender: str        # 'Male', 'Female'
+    active_member: int # 1 for Yes, 0 for No
 
+# 3. Create the prediction endpoint
 @app.post("/predict_churn")
-async def predict_churn(data: CustomerData):
-    print(f"INCOMING DATA DICT: {data.dict()}")
+async def predict_churn(data: BankCustomerData):
     if pipeline is None:
         return {"error": "Model not loaded. Please check server logs."}
 
     input_df = pd.DataFrame([data.dict()])
     
-    # -----------------------------------------------------------------
-    # 👇 REPLACE your old feature_order list with this new one
-    # -----------------------------------------------------------------
+    # 4. Define the feature order (must match training)
     feature_order = [
-        'tenure', 'MonthlyCharges', 'TotalCharges','gender', 'Partner', 'Dependents',
-        'PhoneService', 'MultipleLines', 'InternetService', 'OnlineSecurity',
-        'OnlineBackup', 'DeviceProtection', 'TechSupport', 'StreamingTV',
-        'StreamingMovies', 'Contract', 'PaperlessBilling', 'PaymentMethod'
+        'credit_score', 'age', 'tenure', 'balance', 'products_number',
+        'estimated_salary', 'country', 'gender', 'active_member'
     ]
-    # -----------------------------------------------------------------
-    
     input_df = input_df[feature_order]
 
     try:
         probabilities = pipeline.predict_proba(input_df)
-        churn_probability = float(probabilities[0][1])
-
-        if pd.isna(churn_probability):
-            churn_probability = 0.0
+        churn_probability = float(probabilities[0][1]) # Convert from numpy.float
 
         return {
             "prediction_label": "Churn" if churn_probability > 0.5 else "No Churn",
             "churn_probability": round(churn_probability, 4)
         }
     except Exception as e:
-        print(f"ERROR: Prediction failed: {str(e)}")
-        return {"error": f"Prediction failed: {str(e)}"}
+        error_msg = f"Prediction failed: {str(e)}"
+        print(f"ERROR: {error_msg}")
+        return {"error": error_msg}
 
 @app.get("/")
 def read_root():
-    return {"message": "Welcome to the Churn Prediction API. Go to /docs to see the endpoints."}
+    return {"message": "Welcome to the Bank Churn Prediction API."}

@@ -1,0 +1,10 @@
+# Python virtual environment
+.venv/
+venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Model files (if you don't want to store them in Git, but for this project, it's fine)
+# models/

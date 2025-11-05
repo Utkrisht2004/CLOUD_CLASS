@@ -1,0 +1,143 @@
+/* --- Global Styles & Background --- */
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
+    Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f4f7f6; /* Light gray background like the image */
+}
+
+/* --- Main App Container --- */
+.App {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem;
+  box-sizing: border-box; /* Ensures padding doesn't break layout */
+}
+
+/* --- The Main Card --- */
+main {
+  background-color: #ffffff;
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.07);
+  width: 100%;
+  max-width: 800px; /* Adjust this width as you like */
+  box-sizing: border-box;
+}
+
+/* --- Header --- */
+.App-header {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.App-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #222;
+  margin: 0;
+}
+
+/* --- Form Layout (The 2-Column Grid) --- */
+form {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Two equal columns */
+  gap: 1.5rem 2rem; /* Row gap and Column gap */
+  margin-bottom: 2rem;
+}
+
+/* --- Form Item Styling --- */
+form div {
+  display: flex;
+  flex-direction: column;
+}
+
+form label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+form input[type='number'],
+form select {
+  padding: 0.75rem 1rem;
+  border: 1px solid #d1d5db; /* Light gray border */
+  border-radius: 8px;
+  font-size: 1rem;
+  color: #111;
+  background-color: #ffffff;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+form input[type='number']:focus,
+form select:focus {
+  outline: none;
+  border-color: #4f46e5; /* Highlight color (a nice indigo) */
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+}
+
+/* --- Button Styling --- */
+.button-container {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+  /* Make buttons span both columns */
+  grid-column: 1 / -1;
+}
+
+button {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+/* Primary "Calculate" Button */
+button[type='submit'] {
+  background-color: #4f46e5; /* Indigo blue */
+  color: white;
+}
+
+button[type='submit']:hover {
+  background-color: #4338ca;
+}
+
+/* Secondary "Reset" Button (if you add one) */
+button[type='button'] {
+  background-color: #e5e7eb; /* Light gray */
+  color: #374151; /* Dark gray text */
+}
+
+button[type='button']:hover {
+  background-color: #d1d5db;
+}
+
+/* --- Result & Error Styling --- */
+.result {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.result h2 {
+  font-size: 1.25rem;
+  color: #333;
+}
+
+.result p {
+  font-size: 1.5rem;
+  margin: 0.5rem 0;
+}
+
+.error {
+  color: #ef4444; /* Red color */
+  font-weight: 600;
+}
